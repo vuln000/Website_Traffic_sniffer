@@ -60,7 +60,10 @@ def kill(process):
     if (process.wait())==-9 : # this will print -9 if killed force fully, else -15.
        print('tshark killed force fully')
 def kill2(proc_pid):
-    pids = get_pid('firefox.real')
+    try:
+        pids = get_pid('firefox.real')
+    except:
+        print("error when kill2")
     #print(pids)
     for pid in pid_TBB_list:
         if pid in pids:
@@ -116,8 +119,8 @@ def mult_capture(url_1,url_2,epoch):
     cmd_chmod = 'sudo chmod o+r '+ path+url_1+'-'+str(epoch)+'.cap'
     print(cmd_chmod)
     chmod = subprocess.Popen(cmd_chmod,stdout=subprocess.PIPE,shell=True)
+    np.save('y_split',y_split)
     print('exit')
-    np.save('y_split',y_split) 
 def capture(website,epoch):
     if 'tor' in sys.argv:
         sniff_port = sniff_port_tor
@@ -153,6 +156,11 @@ with open('websites.txt','r') as f:
 with open('websites_non_sensitive.txt','r') as f:
     websites_non_sensitive = f.readlines()
 
+with open('logs/log_successed.txt','w') as f:
+    print("log_successed.txt refreshed")
+with open('logs/log_failed.txt','w') as f:
+    print("log_failed.txt refreshed")
+
 if 'tor' in sys.argv:
     Timeout = 100
     try:
@@ -172,7 +180,12 @@ if 'mult' in sys.argv:
             pos = np.random.randint(0,len(websites))
             url_2 = websites[pos].split('\n')[0]
             print("The second website is "+url_2)
-            mult_capture(url_1,url_2,epoch)
+            file_name = path+url_1+'-'+str(epoch)+'.cap'
+            try:
+                mult_capture(url_1,url_2,epoch)
+                logger(file_name,True)
+            except:
+                logger(file_name,False)  
 elif 'single' in sys.argv:
     path = os.getcwd()+'/results/'
     figpath = 'screenshots/'
@@ -182,9 +195,18 @@ elif 'single' in sys.argv:
         url = i.split('\n')[0]
         print('Dealing with sesitive '+str(url))
         for epoch in tqdm(range(instances)):
-            capture(url,epoch)
-    
+            file_name = path+url+'-'+str(epoch)+'.cap'
+            try:
+                capture(url,epoch)
+                logger(file_name,True)
+            except:
+                logger(file_name,False)
     for i in tqdm(websites_non_sensitive):
         url = i.split('\n')[0]
         print('Dealing with non-sesitive '+str(url))
-        capture(url,999)
+        file_name = path+url+'-'+str(999)+'.cap'
+        try:
+            capture(url,999)
+            logger(file_name,True)
+        except:
+            logger(file_name,False)
