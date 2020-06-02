@@ -8,6 +8,7 @@ control_port=9151
 sniff_port_http=8899
 sniff_port_tor=1082
 screensnap_control=True
+workers=4
 TBB_dir=/home/sun/Downloads/tor-browser-linux64-9.0.10_en-US/tor-browser_en-US
 firefox_dir=/usr/bin/firefox
 proxy_type=1

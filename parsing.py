@@ -9,6 +9,7 @@ import warnings
 import math
 from utils import *
 import subprocess
+import threading
 warnings.filterwarnings('ignore')
 tracemalloc.start()
 
@@ -19,7 +20,9 @@ proxy_port = int(config['proxy_port'])
 length_cell = int(config['length_cell'])
 target = config['target']
 save_path = config['save_path']
+workers = int(config['workers'])
 
+pcaps_list=[]
 def get_pid(name):
     pids = subprocess.check_output(["pidof",name]).split()
     pids_1 = []
@@ -190,11 +193,11 @@ def read_cells(target_dir,name):
     print('{} tcp packets ({}%) are droped'.format(counts_packet_nottls,round(100*counts_packet_nottls/len(packets),2)))
     num_res = len(packets)-counts_packet_nottls
     print('{} tls records ({}%) droped beacuse of less than threshold in {}'.format(counts_packet_del,round(100*counts_packet_del/num_res,2),target_dir))
-def read_all(target):
-    pcaps_list = []
-    pcaps = os.listdir(target)
-   # print(pcaps)
-    for pcap in tqdm(pcaps):
+def read_all(pcaps):
+    #pcaps_list = []
+    #pcaps = os.listdir(target)
+    #print(pcaps)
+    for pcap in pcaps:
         domain = pcap.split('-')[0]
         if domain not in pcaps_list:
             pcaps_list.append(domain)
@@ -207,8 +210,27 @@ def read_all(target):
             read_tls(pcap,name)
         elif 'cells' in sys.argv:
             read_cells(pcap,name)
-
+def split_list_by_workers(lis,workers):
+    after_split = []
+    length = len(lis)//workers
+    for i in range(workers-1):
+        temp = lis[:length]
+        lis = lis[length:]
+        after_split.append(temp)
+    after_split.append(lis)
+    return after_split
 def main():
+    thread_list = []
+    pcaps = os.listdir(target) 
     check_path(save_path)
-    read_all(target)
+    pcaps_split = split_list_by_workers(pcaps,workers)
+    print("parsing by {} workers".format(workers))
+    for i in range(workers): 
+        print(len(pcaps_split[i]))
+        p = threading.Thread(target=read_all,args=(pcaps_split[i],)) #magic,do not touch
+        thread_list.append(p)
+        p.start()
+    for thread in thread_list:
+        thread.join()
+    #read_all(pcaps)
 main()
