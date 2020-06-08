@@ -40,8 +40,7 @@ def logger(file_name,flag):
     else:
         with open('logs/log_failed.txt','a') as f:
             f.write(str(localtime)+' '+str(f_kb)+'kb saved in '+ str(file_name)+'\n')
-    if parsing_control=='True':
-        os.remove(file_name)
+
 
 def cache_clean():
     caches = os.listdir('/tmp')

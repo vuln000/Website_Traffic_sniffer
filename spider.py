@@ -125,13 +125,12 @@ def mult_capture(url_1,url_2,id_website,epoch):
     cmd_chmod = 'sudo chmod 777 '+ path+url_1+'-'+str(epoch)+'.cap'
     print(cmd_chmod)
     chmod = subprocess.Popen(cmd_chmod,stdout=subprocess.PIPE,shell=True)
+    np.save('y_split',y_split)
     if parsing_control=='True':
-        print('Trying to parsing...')
-        cmd_parsing = 'python parsing_now.py ' + str(id_website) + ' ' +str(temp_parsing_type) + website+'-'+str(epoch)+'.cap'
+        print('Trying to parsing while browsing...')
+        cmd_parsing = 'python parsing_now.py ' + str(temp_parsing_type)
         print(cmd_parsing)
         p = subprocess.Popen(cmd_parsing,stdout=subprocess.PIPE,shell=True)
-        p.wait()
-    np.save('y_split',y_split)
     cache_clean()
     print('exit')
 def capture(website,id_website,epoch):
@@ -161,11 +160,10 @@ def capture(website,id_website,epoch):
     print(cmd_chmod)
     chmod = subprocess.Popen(cmd_chmod,stdout=subprocess.PIPE,shell=True)
     if parsing_control=='True':
-        print('Trying to parsing...')
-        cmd_parsing = 'python parsing_now.py ' + str(id_website) + ' ' +str(temp_parsing_type) + website+'-'+str(epoch)+'.cap'
+        print('Trying to parsing while browsing...')
+        cmd_parsing = 'python parsing_now.py ' + str(temp_parsing_type)
         print(cmd_parsing)
         p = subprocess.Popen(cmd_parsing,stdout=subprocess.PIPE,shell=True)
-        p.wait()
     cache_clean()
     print('exit')
 
@@ -191,12 +189,15 @@ if ('cells' in parsing_type) and 'tor' not in sys.argv:
 for i in parsing_type:
     temp_parsing_type=temp_parsing_type + str(i) +' '
 
+
 if 'tor' in sys.argv:
     Timeout = 100
     try:
         protect_tbb()
     except:
         print('No TBB servises detected')
+
+
 if 'mult' in sys.argv:
     Timeout = Timeout*2
     path = os.getcwd()+'/mult_tab_results/'
@@ -242,3 +243,5 @@ elif 'single' in sys.argv:
             logger(file_name,True)
         except:
             logger(file_name,False)
+print('waitting for stop')
+time.sleep(99999999)
