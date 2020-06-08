@@ -157,7 +157,7 @@ def capture(website,id_website,epoch):
         kill_firefox()
     else:
         kill2(process_page_1.pid)
-    cmd_chmod = 'sudo chmod o+r '+ path+website+'-'+str(epoch)+'.cap'
+    cmd_chmod = 'sudo chmod 777 '+ path+website+'-'+str(epoch)+'.cap'
     print(cmd_chmod)
     chmod = subprocess.Popen(cmd_chmod,stdout=subprocess.PIPE,shell=True)
     if parsing_control=='True':
