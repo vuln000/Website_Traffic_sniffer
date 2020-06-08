@@ -1,0 +1,15 @@
+Sun Jun  7 22:32:36 2020 1110.59765625kb saved in /home/sun/Desktop/spider/results/www.taobao.com-0.cap
+Sun Jun  7 22:34:32 2020 2623.38671875kb saved in /home/sun/Desktop/spider/results/www.taobao.com-1.cap
+Sun Jun  7 22:36:39 2020 3665.125kb saved in /home/sun/Desktop/spider/results/www.taobao.com-2.cap
+Sun Jun  7 22:38:38 2020 2744.4375kb saved in /home/sun/Desktop/spider/results/www.taobao.com-3.cap
+Sun Jun  7 22:40:38 2020 2771.21484375kb saved in /home/sun/Desktop/spider/results/www.taobao.com-4.cap
+Sun Jun  7 22:42:24 2020 766.421875kb saved in /home/sun/Desktop/spider/results/www.baidu.com-0.cap
+Sun Jun  7 22:44:09 2020 510.2890625kb saved in /home/sun/Desktop/spider/results/www.baidu.com-1.cap
+Sun Jun  7 22:45:55 2020 858.2578125kb saved in /home/sun/Desktop/spider/results/www.baidu.com-2.cap
+Sun Jun  7 22:47:39 2020 391.0390625kb saved in /home/sun/Desktop/spider/results/www.baidu.com-3.cap
+Sun Jun  7 22:49:26 2020 1022.5234375kb saved in /home/sun/Desktop/spider/results/www.baidu.com-4.cap
+Sun Jun  7 22:51:17 2020 1764.1640625kb saved in /home/sun/Desktop/spider/results/www.163.com-0.cap
+Sun Jun  7 22:53:07 2020 1977.98828125kb saved in /home/sun/Desktop/spider/results/www.163.com-1.cap
+Sun Jun  7 22:54:57 2020 1633.99609375kb saved in /home/sun/Desktop/spider/results/www.163.com-2.cap
+Sun Jun  7 22:57:03 2020 5511.31640625kb saved in /home/sun/Desktop/spider/results/www.163.com-3.cap
+Sun Jun  7 22:58:55 2020 2040.2265625kb saved in /home/sun/Desktop/spider/results/www.163.com-4.cap

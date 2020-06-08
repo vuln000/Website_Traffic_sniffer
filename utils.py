@@ -2,7 +2,7 @@ import pathlib
 import os
 import subprocess
 import time
- 
+
 
 def read_config(config_path):
     dict_temp = {}
@@ -26,6 +26,10 @@ def check_path(save_path):
         cmd_chmod = 'sudo chmod o+w '+ save_path
         print(cmd_chmod)
         chmod = subprocess.Popen(cmd_chmod,stdout=subprocess.PIPE,shell=True)
+
+config = read_config('config')
+parsing_control = str(config['parsing_control'])
+
 def logger(file_name,flag):
     localtime = time.asctime( time.localtime(time.time()) )
     fsize = os.path.getsize(file_name)
@@ -36,3 +40,9 @@ def logger(file_name,flag):
     else:
         with open('logs/log_failed.txt','a') as f:
             f.write(str(localtime)+' '+str(f_kb)+'kb saved in '+ str(file_name)+'\n')
+    if parsing_control=='True':
+        os.remove(file_name)
+
+def cache_clean():
+    #while(True):
+    os.system('sudo rm -r /tmp/')

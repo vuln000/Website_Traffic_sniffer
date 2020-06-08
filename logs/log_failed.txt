@@ -1,3 +1,1 @@
-Mon Jun  1 21:31:01 2020 4527.14453125kb saved in /home/sun/Desktop/spider/results/www.taobao.com-0.cap
-Mon Jun  1 21:31:01 2020 0.3828125kb saved in /home/sun/Desktop/spider/results/www.taobao.com-1.cap
-Mon Jun  1 21:31:02 2020 0.3828125kb saved in /home/sun/Desktop/spider/results/www.taobao.com-2.cap
+Sun Jun  7 22:59:54 2020 1716.40234375kb saved in /home/sun/Desktop/spider/results/www.zhihu.com-0.cap

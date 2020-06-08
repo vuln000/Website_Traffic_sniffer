@@ -15,6 +15,8 @@ proxy_http_port = int(config['proxy_http_port'])
 proxy_ssl = str(config['proxy_ssl'])
 proxy_ssl_port = int(config['proxy_ssl_port'])
 
+socks_port = int(config['socks_port'])
+control_port = int(config['control_port'])
 def firfox_proxy(webdriver):
     profile = webdriver.FirefoxProfile()
     profile.set_preference('network.proxy.type', proxy_type)
@@ -27,7 +29,10 @@ def firfox_proxy(webdriver):
 
 
 def capture(website,epoch):
+    #print("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
+    #print(sys.argv)
     if 'tor' in sys.argv:
+        print("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
         browser = TorBrowserDriver(TBB_dir,socks_port=socks_port,control_port=control_port)
     else:
         profile = firfox_proxy(webdriver)

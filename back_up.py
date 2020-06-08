@@ -52,7 +52,7 @@ def get_name(target_dir,name):
     #name = a.split('.')[1]
     id = b.split('.')[0]
     return name + '-' + id
-def write_to_file(f,time,direc,size,flag=False):
+def write_to_file(f,time,direc,size):
     if('T' in sys.argv):
         f.writelines(str(time))
         f.writelines('\t')
@@ -62,14 +62,8 @@ def write_to_file(f,time,direc,size,flag=False):
     if('S' in sys.argv):
         f.writelines('\t')
         f.writelines(str(size))
-    if flag==True:
-        f.writelines(str(time))
-        f.writelines('\t')
-        f.writelines(str(direc))
-        f.writelines('\t')
-        f.writelines(str(size))
     f.writelines('\n')
-def read_packets(target_dir,name,save_path,flag=False):
+def read_packets(target_dir,name):
     target_dir = target + target_dir
     packets = rdpcap(target_dir)
     first_pkt = packets[0]
@@ -91,12 +85,12 @@ def read_packets(target_dir,name,save_path,flag=False):
             try:
                 time = float(packet.time) - start_time
                 direc = get_directions(packet)
-                write_to_file(f,time,direc,size,flag)
+                write_to_file(f,time,direc,size)
             except:
                 print('error when extract features at packet')
     f.close()
     print('{} packets ({}%) droped beacuse of less than threshold {} in {}'.format(counts_packet_del,round(100*counts_packet_del/len(packets),2),threshold,target_dir))
-def read_tls(target_dir,name,save_path,flag=False):
+def read_tls(target_dir,name):
     target_dir = target + target_dir
     packets = rdpcap(target_dir)
     flags = []
@@ -132,7 +126,7 @@ def read_tls(target_dir,name,save_path,flag=False):
                     try:
                         time = float(packet.time) - start_time
                         direc = get_directions(packet)
-                        write_to_file(f,time,direc,size,flag)
+                        write_to_file(f,time,direc,size)
                     except:
                         print('error when extract features at tls records')
             else:
@@ -149,7 +143,7 @@ def read_tls(target_dir,name,save_path,flag=False):
     num_res = len(packets)-counts_packet_nottls
     print('{} tls records ({}%) droped beacuse of less than threshold in {}'.format(counts_packet_del,round(100*counts_packet_del/num_res,2),target_dir))
 
-def read_cells(target_dir,name,save_path,flag=False):
+def read_cells(target_dir,name):
     target_dir = target + target_dir
     packets = rdpcap(target_dir)
     flags = []
@@ -173,7 +167,7 @@ def read_cells(target_dir,name,save_path,flag=False):
     try:
         for packet in packets:
             if("SSL Layer" in flags[number]):
-                size = length_cell
+                size = len(packet)
                 num_cells = math.floor(size/length_cell)
                 if size<=threshold:
                     counts_packet_del = counts_packet_del + 1
@@ -183,7 +177,7 @@ def read_cells(target_dir,name,save_path,flag=False):
                         time = float(packet.time) - start_time
                         direc = get_directions(packet)
                         for i in range(num_cells):
-                            write_to_file(f,time,direc,size,flag)
+                            write_to_file(f,time,direc,size)
                     except:
                         print('error when extract features at tls records')
             else:
@@ -211,11 +205,11 @@ def read_all(pcaps):
             pass
         name = pcaps_list.index(domain)
         if 'packets' in sys.argv:
-            read_packets(pcap,name,save_path)
+            read_packets(pcap,name)
         elif 'tls' in sys.argv:
-            read_tls(pcap,name,save_path)
+            read_tls(pcap,name)
         elif 'cells' in sys.argv:
-            read_cells(pcap,name,save_path)
+            read_cells(pcap,name)
 def split_list_by_workers(lis,workers):
     after_split = []
     length = len(lis)//workers
@@ -225,7 +219,7 @@ def split_list_by_workers(lis,workers):
         after_split.append(temp)
     after_split.append(lis)
     return after_split
-def main_packets():
+def main():
     thread_list = []
     pcaps = os.listdir(target) 
     check_path(save_path)
@@ -238,9 +232,5 @@ def main_packets():
         p.start()
     for thread in thread_list:
         thread.join()
-if 'packets' in sys.argv:
-    main_packets()
-elif 'cells' or 'tls' in sys.argv:
-    #print('GGGGGGGGGGGGGGGGG')
-    pcaps = os.listdir(target) 
-    read_all(pcaps)
+    #read_all(pcaps)
+main()

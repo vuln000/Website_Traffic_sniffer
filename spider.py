@@ -24,7 +24,13 @@ socks_port= int(config['socks_port'])
 control_port= int(config['control_port'])
 sniff_port_http = int(config['sniff_port_http'])
 sniff_port_tor = int(config['sniff_port_tor'])
-screensnap_control = config['screensnap_control']
+screensnap_control = str(config['screensnap_control'])
+refreshlog = str(config['refreshlog'])
+parsing_control = str(config['parsing_control'])
+parsing_type = str(config['parsing_type']).split(',')
+
+print(sys.argv)
+
 y_split = []
 pid_TBB_list = []
 def protect_tbb():
@@ -84,7 +90,7 @@ def kill_firefox():
     for pid in pids:
         cmd1 = "sudo kill -9 %s" % pid# . # -9 to kill force fully
         os.system(cmd1)
-def mult_capture(url_1,url_2,epoch):
+def mult_capture(url_1,url_2,id_website,epoch):
     if 'tor' in sys.argv:
         sniff_port = sniff_port_tor
         cmd_page_1 = 'python browser.py ' + str(url_1) + ' '+ str(epoch) + ' tor mult'
@@ -105,7 +111,7 @@ def mult_capture(url_1,url_2,epoch):
     process_page_2 = subprocess.Popen(cmd_page_2,stdout=subprocess.PIPE,shell=True)
     print('Watting for Timeout ',Timeout)
     time.sleep(Timeout//2)
-    if screensnap_control==True:
+    if screensnap_control=='True':
         screensnap(url_1,epoch)
     time.sleep(Timeout//2)
    # kill2(process_page_1.pid)
@@ -119,9 +125,16 @@ def mult_capture(url_1,url_2,epoch):
     cmd_chmod = 'sudo chmod o+r '+ path+url_1+'-'+str(epoch)+'.cap'
     print(cmd_chmod)
     chmod = subprocess.Popen(cmd_chmod,stdout=subprocess.PIPE,shell=True)
+    if parsing_control=='True':
+        print('Trying to parsing...')
+        cmd_parsing = 'python parsing_now.py ' + str(id_website) + ' ' +str(temp_parsing_type) + website+'-'+str(epoch)+'.cap'
+        print(cmd_parsing)
+        p = subprocess.Popen(cmd_parsing,stdout=subprocess.PIPE,shell=True)
+        p.wait()
     np.save('y_split',y_split)
+    cache_clean()
     print('exit')
-def capture(website,epoch):
+def capture(website,id_website,epoch):
     if 'tor' in sys.argv:
         sniff_port = sniff_port_tor
         cmd_page_1 = 'python browser.py ' + str(website) + ' '+ str(epoch) + ' tor'
@@ -131,10 +144,11 @@ def capture(website,epoch):
     cmd = 'sudo tshark -w '+ path+website+'-'+str(epoch)+'.cap -i any -f "port '+ str(sniff_port)+ '"'
     print(cmd)
     tshark = subprocess.Popen(cmd,stdout=subprocess.PIPE,shell=True)
+    print(cmd_page_1)
     process_page_1 = subprocess.Popen(cmd_page_1,stdout=subprocess.PIPE,shell=True)
     print('Watting for Timeout ',Timeout)
     time.sleep(Timeout//2)
-    if screensnap_control==True:
+    if screensnap_control=='True':
         screensnap(website,epoch)
     time.sleep(Timeout//2)
     #kill2(process_page_1.pid)
@@ -146,6 +160,13 @@ def capture(website,epoch):
     cmd_chmod = 'sudo chmod o+r '+ path+website+'-'+str(epoch)+'.cap'
     print(cmd_chmod)
     chmod = subprocess.Popen(cmd_chmod,stdout=subprocess.PIPE,shell=True)
+    if parsing_control=='True':
+        print('Trying to parsing...')
+        cmd_parsing = 'python parsing_now.py ' + str(id_website) + ' ' +str(temp_parsing_type) + website+'-'+str(epoch)+'.cap'
+        print(cmd_parsing)
+        p = subprocess.Popen(cmd_parsing,stdout=subprocess.PIPE,shell=True)
+        p.wait()
+    cache_clean()
     print('exit')
 
 
@@ -156,10 +177,19 @@ with open('websites.txt','r') as f:
 with open('websites_non_sensitive.txt','r') as f:
     websites_non_sensitive = f.readlines()
 
-with open('logs/log_successed.txt','w') as f:
-    print("log_successed.txt refreshed")
-with open('logs/log_failed.txt','w') as f:
-    print("log_failed.txt refreshed")
+if refreshlog=='True':
+    with open('logs/log_successed.txt','w') as f:
+        print("log_successed.txt refreshed")
+    with open('logs/log_failed.txt','w') as f:
+        print("log_failed.txt refreshed")
+
+#check parsing_type
+temp_parsing_type=''
+if ('cells' in parsing_type) and 'tor' not in sys.argv:
+    print('cells could only be extracted from tor traffic')
+    parsing_type.remove('cells')
+for i in parsing_type:
+    temp_parsing_type=temp_parsing_type + str(i) +' '
 
 if 'tor' in sys.argv:
     Timeout = 100
@@ -173,7 +203,8 @@ if 'mult' in sys.argv:
     figpath = 'mult_tab_screenshots/'
     check_path(path)
     check_path(figpath)
-    for i in websites:
+    num_websites=len(websites)
+    for i,id_website in zip(websites,range(num_websites)):
         url_1 = i.split('\n')[0]
         print('Dealing with sesitive '+str(url_1))
         for epoch in tqdm(range(instances)):
@@ -182,7 +213,7 @@ if 'mult' in sys.argv:
             print("The second website is "+url_2)
             file_name = path+url_1+'-'+str(epoch)+'.cap'
             try:
-                mult_capture(url_1,url_2,epoch)
+                mult_capture(url_1,url_2,id_website,epoch)
                 logger(file_name,True)
             except:
                 logger(file_name,False)  
@@ -191,22 +222,23 @@ elif 'single' in sys.argv:
     figpath = 'screenshots/'
     check_path(path)
     check_path(figpath)
-    for i in websites:
+    num_websites=len(websites)
+    for i,id_website in zip(websites,range(num_websites)):
         url = i.split('\n')[0]
         print('Dealing with sesitive '+str(url))
         for epoch in tqdm(range(instances)):
             file_name = path+url+'-'+str(epoch)+'.cap'
             try:
-                capture(url,epoch)
+                capture(url,id_website,epoch)
                 logger(file_name,True)
             except:
                 logger(file_name,False)
-    for i in tqdm(websites_non_sensitive):
+    for i,id_website in zip(websites_non_sensitive,range(len(websites_non_sensitive))):
         url = i.split('\n')[0]
         print('Dealing with non-sesitive '+str(url))
         file_name = path+url+'-'+str(999)+'.cap'
         try:
-            capture(url,999)
+            capture(url,id_website,999)
             logger(file_name,True)
         except:
             logger(file_name,False)
