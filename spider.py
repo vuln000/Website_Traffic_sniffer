@@ -122,7 +122,7 @@ def mult_capture(url_1,url_2,id_website,epoch):
     else:
         kill2(process_page_1.pid)
         kill2(process_page_2.pid)
-    cmd_chmod = 'sudo chmod o+r '+ path+url_1+'-'+str(epoch)+'.cap'
+    cmd_chmod = 'sudo chmod 777 '+ path+url_1+'-'+str(epoch)+'.cap'
     print(cmd_chmod)
     chmod = subprocess.Popen(cmd_chmod,stdout=subprocess.PIPE,shell=True)
     if parsing_control=='True':

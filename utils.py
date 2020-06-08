@@ -2,7 +2,7 @@ import pathlib
 import os
 import subprocess
 import time
-
+import shutil
 
 def read_config(config_path):
     dict_temp = {}
@@ -44,5 +44,10 @@ def logger(file_name,flag):
         os.remove(file_name)
 
 def cache_clean():
-    #while(True):
-    os.system('sudo rm -r /tmp/')
+    caches = os.listdir('/tmp')
+    for cache in caches:
+        if 'rust' in str(cache):
+            try: 
+                shutil.rmtree('/tmp/'+str(cache))
+            except:
+                print("error in remove"+'/tmp/'+str(cache))
