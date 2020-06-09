@@ -25,21 +25,27 @@ def get_name(pcap):
             return str(p+len(websites))
 
 pcaps = os.listdir('results/')
-if len(pcaps)>2:
-    for pcap in pcaps:
-        try:
-            pcap_path = 'results/'+pcap
-            name = get_name(pcap)
-            if 'packets' in sys.argv:
-                read_packets(pcap,name,path_packets,flag=True)
-            if 'tls' in sys.argv:
-                read_tls(pcap,name,path_tls,flag=True)
-            if 'cells' in sys.argv:
-                read_cells(pcap,name,path_cells,flag=True)
-            os.remove(pcap_path)
-            print(str(pcap_path) + 'has been removed')
-        except:
-            print('writing ... jumped')
+new_pcap=[]
+for pcap in pcaps:
+    if (os.stat('results/'+pcap).st_mode==33152):
+        print("jump",pcap)
+    else:
+        new_pcap.append(pcap)
+
+for pcap in new_pcap:
+    try:
+        pcap_path = 'results/'+pcap
+        name = get_name(pcap)
+        if 'packets' in sys.argv:
+            read_packets(pcap,name,path_packets,flag=True)
+        if 'tls' in sys.argv:
+            read_tls(pcap,name,path_tls,flag=True)
+        if 'cells' in sys.argv:
+            read_cells(pcap,name,path_cells,flag=True)
+        os.remove(pcap_path)
+        print(str(pcap_path) + 'has been removed')
+    except:
+        print('writing ... jumped')
  
 
 
